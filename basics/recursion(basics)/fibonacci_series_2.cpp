@@ -1,0 +1,17 @@
+#include<iostream>
+//o(2^n)
+using namespace std;
+
+int fib(int n){
+    if(n<=1) return n ;
+    int l = fib(n-1);
+    int sl = fib(n-2);
+    return l+sl;
+}
+
+int main(){
+    int n;
+    cout<<"enter a number"<<endl;
+    cin>>n;
+    cout<<fib(n);
+}
