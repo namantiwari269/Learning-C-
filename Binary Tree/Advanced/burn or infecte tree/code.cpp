@@ -1,3 +1,4 @@
+
 #include<iostream>
 using namespace std;
 
@@ -9,27 +10,26 @@ using namespace std;
      TreeNode *right;
      TreeNode(int x) : val(x), left(NULL), right(NULL) {}
  };
- 
+
+
 class Solution {
 public:
-    vector<int> distanceK(TreeNode* root, TreeNode* target, int k) {
-        unordered_map<TreeNode*, TreeNode*> parent;
-        unordered_map<TreeNode*, int> vis;
-        int dep = 0;
-        parent[root] = NULL;
-        markparent(root, parent);
+    int amountOfTime(TreeNode* root, int start) {
+        unordered_map<TreeNode*, TreeNode*> parents;
+        TreeNode* st = parent(parents, root, start);
         queue<TreeNode*> q;
-        vis[target] = 1;
-        q.push(target);
+        unordered_map<TreeNode*, int> vis;
+        int count=0;
+        q.push(st);
+        vis[st] = 1;
         while (!q.empty()) {
             int sz = q.size();
-            if(dep==k) break;
             for (int i = 0; i < sz; i++) {
                 TreeNode* curr = q.front();
                 q.pop();
-                if (parent[curr] && vis.find(parent[curr]) == vis.end()) {
-                    q.push(parent[curr]);
-                    vis[parent[curr]]++;
+                if (parents[curr] && vis.find(parents[curr]) == vis.end()) {
+                    q.push(parents[curr]);
+                    vis[parents[curr]]++;
                 }
                 if (curr->left && vis.find(curr->left) == vis.end()) {
                     q.push(curr->left);
@@ -40,32 +40,30 @@ public:
                     vis[curr->right]++;
                 }
             }
-            dep++;
+            count++;
         }
-        vector<int> result;
-        while (!q.empty()) {
-            result.push_back(q.front()->val);
-            q.pop();
-        }
-        return result;
+        return count-1;
     }
-
-private:
-    void markparent(TreeNode* root,
-                    unordered_map<TreeNode*, TreeNode*>& parent) {
+    TreeNode* parent(unordered_map<TreeNode*, TreeNode*>& parents,
+                     TreeNode* root, int start) {
         queue<TreeNode*> q;
+        TreeNode* st = NULL;
         q.push(root);
+        parents[root] = NULL;
         while (!q.empty()) {
             TreeNode* curr = q.front();
+            if (curr->val == start)
+                st = curr;
             q.pop();
             if (curr->left) {
-                parent[curr->left] = curr;
+                parents[curr->left] = curr;
                 q.push(curr->left);
             }
             if (curr->right) {
-                parent[curr->right] = curr;
+                parents[curr->right] = curr;
                 q.push(curr->right);
             }
         }
+        return st;
     }
 };
